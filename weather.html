@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head lang ="en">
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" type="text/css" href="weatherStyles.css" />
+	
+	<Title>Weather</Title>
+	<style>
+	
+	</style>
+</head>
+<body id="weatherBody">
+
+	<div class="container-fluid">
+		<section class="main">
+			<!-- Take user input to pass to api function call -->
+			<section class="inputs">
+				<input type="text" placeholder= "Enter any city" id= "cityinput"><br>
+				<select id="states" name="states">
+				  <option value="none">Please Choose a State</option>
+				  <option value="alabama">Alabama</option>
+				  <option value="Alaska">Alaska</option>
+				  <option value="Arizona">Arizona</option>
+				  <option value="Arkansas">Arkansas</option>
+				  <option value="California">California</option>
+				  <option value="Colorado">Colorado</option> 
+				  <option value="Connecticut">Connecticut</option>
+				  <option value="Delaware">Delaware</option>
+				  <option value="DC">D.C.</option>
+				  <option value="Florida">Florida</option>
+				  <option value="Georgia">Georgia</option>
+				  <option value="Hawaii">Hawaii</option>
+				  <option value="Idaho">Idaho</option>
+				  <option value="Illinois">Illinois</option>
+				  <option value="Iowa">Iowa</option>
+				  <option value="Kansas">Kansas</option>
+				  <option value="Kentucky">Kentucky</option>
+				  <option value="Louisiana">Louisiana</option>
+				  <option value="Maine">Maine</option>
+				  <option value="Maryland">Maryland</option>
+				  <option value="Massachusetts">Massachusetts</option>
+				  <option value="Minnesota">Minnesota</option>
+				  <option value="Mississippi">Mississippi</option>
+				  <option value="Missouri">Missouri</option>
+				  <option value="Montana">Montana</option>
+				  <option value="Nebraska">Nebraska</option>
+				  <option value="Nevada">Nevada</option>
+				  <option value="New Hampshire">New Hampshire</option>
+				  <option value="New Jersey">New Jersey</option>
+				  <option value="New Mexico">New Mexico</option>
+				  <option value="New York">New York</option>
+				  <option value="North Carolina">North Carolina</option>
+				  <option value="North Dakota">North Dakota</option>
+				  <option value="Ohio">Ohio</option>
+				  <option value="Oklahoma">Oklahoma</option>
+				  <option value="Oregon">Oregon</option>
+				  <option value="Pennsylvania">Pennsylvania</option>
+				  <option value="Puerto Rico">Puerto Rico</option>
+				  <option value="Rhode Island">Rhode Island</option>
+				  <option value="South Carolina">South Carolina</option>
+				  <option value="South Dakota">South Dakota</option>
+				  <option value="Tennessee">Tennessee</option>
+				  <option value="Texas">Texas</option>
+				  <option value="Utah">Utah</option>
+				  <option value="Vermont">Vermont</option>
+				  <option value="Virginia">Virginia</option>
+				  <option value="Washington">Washington</option>
+				  <option value="West Virginia">West Virginia</option>
+				  <option value="Wisconsin">Wisconsin</option>
+				  <option value="Wyoming">Wyoming</option>
+				</select> 
+				<input type="submit" value= "Submit" id= "add">
+			</section>
+			<!-- output secion -->
+			<section class="display">
+				<div class="wrapper">
+				<h2 id="cityoutput"></h2>
+				<p id="description" display="inline-block;"></p><img id="descripIcon" width="80em;" display="inline;">
+				<p id="temp"></p>
+				<p id="feelsLike"></p>
+				<!-- <p id="highlow"></p> -->
+				<p id="wind"></p>
+				<p id="humidity"></p>
+				</div>
+			</section>
+  
+		</section>
+	  </div>
+	  	
+	<script>
+
+var inputval = document.querySelector('#cityinput')
+var inputState = document.querySelector('#states')
+var btn = document.querySelector('#add')
+var city = document.querySelector('#cityoutput')
+var descrip = document.querySelector('#description')
+var temp = document.querySelector('#temp')
+var feels = document.querySelector('#feelsLike')
+// var hiLow = document.querySelector('highlow')
+var wind = document.querySelector('#wind')
+var humidity = document.querySelector('#humidity')
+// var descripIcon = document.querySelector('#decripIcon')
+const apik = "5943db0470df69f0631ba5abf3fa291b";
+let lat
+let lon
+// fetch api data
+btn.addEventListener('click', function(){  
+	fetch("http://api.openweathermap.org/geo/1.0/direct?q=" + inputval.value +","+ inputState.value + ",US&limit=1&appid="+ apik)
+	.then(res => res.json())
+	.then(data => {
+		const lat = data['0']['lat']
+		const lon = data['0']['lon']
+		return fetch('https://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+lon+'&units=imperial&appid='+apik)
+		.then(res => res.json())
+		.then(data => {
+			//store data in consts
+			const nameval = data['name']
+			const descrip = data['weather']['0']['description']
+			const decripIcon = data['weather']['0']['icon']
+			const tempature = Math.round(data['main']['temp'] * 10) / 10
+			const feel = Math.round(data['main']['feels_like'])
+			const high = Math.round(data['main']['temp_max'])
+			const low = Math.round(data['main']['temp_min'])
+			const wndspd = Math.round(data['wind']['speed'] * 10) / 10
+			const humid = data['main']['humidity']
+			//set output elements to data taken from api
+			city.innerHTML=`Weather in <span>${nameval}<span>`
+			temp.innerHTML = `Temperature: <span>${tempature}&#176;F<span>`
+			feels.innerHTML = `Feels Like: <span>${feel}&#176;F<span>`
+			// highlow.innerHTML = `High/Low: <span>${high}&#176;F/${low}&#176;F<span>`
+			description.innerHTML = `Conditions: <span>${descrip}<span>`
+			document.getElementById("descripIcon").src = "https://openweathermap.org/img/wn/" + decripIcon + "@2x.png"
+			wind.innerHTML = `Wind Speed: <span>${wndspd} mph<span>`
+			humidity.innerHTML = `Humidity: <span> ${humid}%<span>`
+			})
+			})
+		//error handling
+        // .catch(err => alert('You entered an unkown city or state name'))
+    })
+	</script>
+</body>
+</html>
